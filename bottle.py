@@ -1027,6 +1027,8 @@ class BaseRequest(object):
     @DictProperty('environ', 'bottle.request.body', read_only=True)
     def _body(self):
         maxread = max(0, self.content_length)
+        if not 'wsgi.input' in self.environ:
+            return BytesIO()
         stream = self.environ['wsgi.input']
         body = BytesIO() if maxread < self.MEMFILE_MAX else TemporaryFile(mode='w+b')
         while maxread > 0:
